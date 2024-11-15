@@ -2,8 +2,9 @@
 <html lang=en>
   <head></head>
   <body>
+    <h1>Checking 
     <?php 
-      echo `<h1>Hello</h1>`;
+      echo "php</h1>";
     ?>
   </body>
 </html>
