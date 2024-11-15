@@ -1,0 +1,107 @@
+CREATE DATABASE SPAM;
+USE SPAM;
+
+CREATE TABLE orders (Oid INT PRIMARY KEY, Uid INT NOT NULL, Payment BOOL NOT NULL, Shipping BOOL NOT NULL);
+
+CREATE TABLE order_items (Oid INT NOT NULL, Pid INT NOT NULL, Quantity INT NOT NULL, PRIMARY KEY (Oid, Pid));
+
+CREATE TABLE Cart (Pid INT NOT NULL, Uid INT NOT NULL, Quantity INT NOT NULL, PRIMARY KEY (Pid, Uid));
+
+CREATE TABLE User(Uid INT PRIMARY KEY, Username VARCHAR(30) NOT NULL, Password CHAR(8) NOT NULL, Phone CHAR(10) NOT NULL, Address VARCHAR(150) NOT NULL, Email VARCHAR(30), Sec_ques VARCHAR(100) NOT NULL, Ans VARCHAR(100) NOT NULL);
+
+CREATE TABLE Product (Pid INT PRIMARY KEY, Name VARCHAR(100) NOT NULL, Description VARCHAR(200), Category VARCHAR(20) NOT NULL, Price DECIMAL(10, 2) NOT NULL CHECK(Price>0), Discount DECIMAL(5,2) NOT NULL CHECK(Discount>=0 AND Discount<=100), Reviews Decimal(2,1) NOT NULL CHECK(Reviews>=0 AND Reviews<=5), Inventory Int CHECK(Inventory>=0));
+
+INSERT INTO orders VALUES ( 1, 5, TRUE, TRUE);
+INSERT INTO orders VALUES ( 2, 3, TRUE, FALSE);
+INSERT INTO orders VALUES ( 3, 7, FALSE, FALSE);
+INSERT INTO orders VALUES ( 4, 2, TRUE, TRUE);
+INSERT INTO orders VALUES ( 5, 8, TRUE, TRUE);
+INSERT INTO orders VALUES ( 6, 1, FALSE, FALSE);
+INSERT INTO orders VALUES ( 7, 6, TRUE, TRUE);
+INSERT INTO orders VALUES ( 8, 4, TRUE, FALSE);
+INSERT INTO orders VALUES ( 9, 5, FALSE, FALSE);
+INSERT INTO orders VALUES ( 10, 2, TRUE, TRUE);
+INSERT INTO orders VALUES ( 11, 7, TRUE, TRUE);
+INSERT INTO orders VALUES ( 12, 1, FALSE, FALSE);
+INSERT INTO orders VALUES ( 13, 3, TRUE, TRUE);
+INSERT INTO orders VALUES ( 14, 6, TRUE, FALSE);
+INSERT INTO orders VALUES ( 15, 4, TRUE, TRUE);
+INSERT INTO orders VALUES ( 16, 8, FALSE, FALSE);
+INSERT INTO orders VALUES ( 17, 5, TRUE, FALSE);
+INSERT INTO orders VALUES ( 18, 3, TRUE, TRUE);
+INSERT INTO orders VALUES ( 19, 2, FALSE, FALSE);
+INSERT INTO orders VALUES ( 20, 7, TRUE, TRUE);
+
+INSERT INTO order_items VALUES (1, 5, 2), (1, 10, 1), (2, 8, 1), (3, 12, 3), (4, 1, 1), (4, 3, 2), (5, 7, 1), (5, 13, 2), (6, 15, 1), (6, 20, 2), (7, 2, 3), (7, 6, 1), (8, 18, 1), (8, 14, 2), (9, 16, 5), (10, 25, 2), (10, 32, 1), (11, 27, 3), (12, 4, 1), (13, 17, 2), (14, 31, 1), (14, 28, 3), (15, 23, 2), (16, 29, 4), (17, 19, 2), (18, 9, 1), (19, 11, 3), (20, 22, 1), (20, 30, 2);
+
+INSERT INTO cart VALUES (5, 1, 2), (7, 1, 3), (12, 2, 1), (3, 2, 4), (6, 3, 1), (8, 3, 2), (20, 4, 3), (9, 4, 2), (18, 5, 1), (14, 5, 2), (2, 6, 5), (4, 6, 1), (13, 7, 2), (10, 7, 1), (16, 8, 4), (11, 8, 3), (19, 1, 1), (25, 2, 2), (30, 3, 3), (22, 4, 2);
+
+INSERT INTO User VALUES
+(1, "Amit Singh", "amit1234", "9876543210", "123, Sector 15, Noida, UP, 201301", "amit.singh@email.com", "What is your mother's maiden name?", "Meera"),
+(2, "Neha Kumar", "neha9876", "9876543211", "56, MG Road, Bengaluru, KA, 560001", "neha.kumar@email.com", "What is your favorite color?", "Blue"),
+(3, "Rahul Verma", "rahul987", "9123456789", "89, Sun City, Gurugram, HR, 122018", "rahul.verma@email.com", "What is your birthplace?", "Delhi"),
+(4, "Priya Rani", "priya567", "8765432101", "20, Ashoka Rd, Delhi, DL, 110001", "priya.rani@email.com", "What was the name of your first pet?", "Tommy"),
+(5, "Arjun Sharma", "arjun423", "9012345678", "12, Banerji Ln, Kolkata, WB, 700001", "arjun.sharma@email.com", "What is your childhood nickname?", "Bunty"),
+(6, "Rita Mishra", "ritawert", "9876543212", "45, Park Street, Chennai, TN, 600001", "rita.mishra@email.com", "What was your first school name?", "St. Xavier's"),
+(7, "Saurav Patel", "saurav01", "9321567890", "102, Ganga Apartments, Ahmedabad, GJ, 380001", "saurav.patel@email.com", "What is your father's middle name?", "Rajesh"),
+(8, "Kavita Yadav", "kavita76", "9078123456", "17, Kamla Nagar, Jaipur, RJ, 302001", "kavita.yadav@email.com", "What is the name of your best friend?", "Rani");
+
+INSERT INTO Product VALUES
+(1, "iPhone 15 Pro", "Latest iPhone with A17 Bionic chip, 128GB storage", "Electronics", 129999, 10, 4.8, 50),
+(2, "Samsung Galaxy S23", "Flagship smartphone with 256GB storage and AMOLED display", "Electronics", 74999, 12, 4.5, 120),
+(3, "Dell XPS 13", "Ultra-thin laptop with Intel i7, 16GB RAM, 512GB SSD", "Electronics", 139999, 15, 4.7, 30),
+(4, "Sony 65-inch LED TV", "Smart TV with 4K resolution and Android OS", "Electronics", 79999, 8, 4.6, 25),
+(5, "Bose Noise Cancelling Headphones 700", "Over-ear headphones with world-class noise cancellation", "Electronics", 33999, 10, 4.7, 100),
+(6, "OnePlus 11", "5G smartphone with Snapdragon 8 Gen 2, 12GB RAM", "Electronics", 54999, 8, 4.6, 90),
+(7, "Fitbit Charge 5", "Fitness tracker with built-in GPS and heart rate monitoring", "Electronics", 9999, 15, 4.5, 150),
+(8, "LG OLED TV 55-inch", "4K OLED Smart TV with perfect black levels", "Electronics", 119999, 5, 4.9, 40),
+(9, "Nike Air Max 270", "Men’s running shoes, comfortable and breathable design", "Fashion", 8999, 20, 4.3, 200),
+(10, "Levi's 501 Original Fit", "Classic straight-fit denim jeans, men's fashion", "Fashion", 2999, 15, 4.5, 150),
+(11, "Adidas Ultraboost 22", "Running shoes with boost technology for comfort and speed", "Fashion", 12999, 10, 4.7, 80),
+(12, "Puma Suede Classic", "Iconic sneakers in premium suede material", "Fashion", 4999, 12, 4.4, 120),
+(13, "H&M Men’s Casual Shirt", "Soft cotton casual shirt with checkered design", "Fashion", 1799, 5, 4.6, 250),
+(14, "Adidas Originals Hoodie", "Classic hoodie with embroidered logo", "Fashion", 3499, 10, 4.7, 100),
+(15, "Panasonic 1.5 Ton AC", "Energy-efficient air conditioner with inverter technology", "Home Appliances", 39999, 12, 4.4, 40),
+(16, "LG Refrigerator 350L", "Double-door fridge with smart inverter compressor", "Home Appliances", 58999, 5, 4.6, 60),
+(17, "Whirlpool Washing Machine", "7kg fully automatic top-load washing machine", "Home Appliances", 27999, 10, 4.2, 90),
+(18, "Bosch Dishwasher", "14-place settings dishwasher with EcoSilence Drive", "Home Appliances", 34999, 8, 4.5, 50),
+(19, "Philips Air Purifier", "3-stage filtration system for clean air in large rooms", "Home Appliances", 14999, 10, 4.7, 150),
+(20, "Croma Microwave Oven", "30L convection microwave oven for grilling & baking", "Home Appliances", 15999, 7, 4.3, 70),
+(21, "Munch Chocolate Bar", "Delicious milk chocolate with a crunchy filling", "Food & Beverages", 50, 0, 4.8, 1000),
+(22, "Tropicana Orange Juice", "100% pure orange juice, no added preservatives", "Food & Beverages", 120, 5, 4.6, 500),
+(23, "Organic Honey 500g", "100% pure organic honey from Himalayan bees", "Food & Beverages", 350, 10, 4.7, 200),
+(24, "Lipton Green Tea", "100% natural green tea with antioxidants", "Food & Beverages", 299, 15, 4.5, 400),
+(25, "Pepsi Pack (6 cans)", "Refreshing Pepsi cola, pack of 6 cans", "Food & Beverages", 180, 10, 4.4, 800),
+(26, "Maggi Instant Noodles", "Quick and easy-to-make noodles, pack of 5", "Food & Beverages", 50, 0, 4.6, 1500),
+(27, "Bosch Cordless Drill", "Powerful cordless drill with multiple speed settings", "Tools & Hardware", 4999, 8, 4.5, 120),
+(28, "Makita Electric Saw", "High-performance electric saw for professional use", "Tools & Hardware", 10999, 15, 4.6, 60),
+(29, "Karcher High Pressure Washer", "Compact pressure washer for home cleaning", "Tools & Hardware", 15999, 10, 4.4, 80),
+(30, "Stanley Tool Set (50 pcs)", "Complete 50-piece tool set with hammer, screwdrivers, etc.", "Tools & Hardware", 2499, 12, 4.7, 150),
+(31, "Black & Decker Electric Drill", "Corded drill for professional and DIY use", "Tools & Hardware", 2999, 5, 4.3, 100),
+(32, "Dewalt Impact Driver", "Cordless impact driver with brushless motor", "Tools & Hardware", 12999, 15, 4.8, 60),
+(33, "Royal Canin Dog Food", "Premium food for adult dogs, with all essential nutrients", "Pet Supplies", 4999, 5, 4.7, 250),
+(34, "Pedigree Cat Food", "Dry cat food with vitamins and minerals for healthy fur", "Pet Supplies", 999, 0, 4.6, 500),
+(35, "Petmate Cat Litter Box", "Durable and easy-to-clean litter box for cats", "Pet Supplies", 1999, 10, 4.5, 150),
+(36, "Trixie Dog Bed", "Soft and comfortable dog bed for all breeds", "Pet Supplies", 2499, 8, 4.4, 200),
+(37, "Mars Dog Treats (Pack of 10)", "Delicious dog treats for training and rewards", "Pet Supplies", 450, 5, 4.6, 300),
+(38, "PetSafe Dog Collar", "Adjustable collar for medium to large dogs", "Pet Supplies", 1999, 12, 4.5, 180),
+(39, "HP DeskJet Printer", "Wireless inkjet printer for home and office use", "Office Supplies", 4999, 10, 4.3, 200),
+(40, "Canon Laser Printer", "Fast printing with wireless connectivity", "Office Supplies", 11999, 12, 4.6, 90),
+(41, "PaperMate Ball Pens (Pack of 10)", "Smooth writing pens for everyday use", "Office Supplies", 120, 0, 4.7, 1000),
+(42, "Sharpie Permanent Markers", "Set of 12 vibrant colors for all writing and art needs", "Office Supplies", 250, 5, 4.6, 500),
+(43, "Logitech Wireless Mouse", "Ergonomic wireless mouse with high precision", "Office Supplies", 999, 8, 4.7, 400),
+(44, "Kores Whiteboard Marker", "Set of 6 colorful whiteboard markers for office use", "Office Supplies", 199, 10, 4.5, 600),
+(45, "Car Care Kit", "Complete car cleaning kit with microfiber cloth, wax", "Automotive", 2999, 15, 4.5, 150),
+(46, "Michelin Car Tyre", "Durable radial tyre with good tread for all vehicles", "Automotive", 4999, 8, 4.7, 75),
+(47, "Castrol Motor Oil", "Synthetic motor oil for high-performance engines", "Automotive", 2500, 5, 4.6, 300),
+(48, "Bosch Car Battery Charger", "Intelligent battery charger for cars and bikes", "Automotive", 2999, 10, 4.8, 60),
+(49, "Toyota Car Seat Covers", "Custom-fit seat covers for Toyota cars", "Automotive", 3500, 7, 4.4, 120),
+(50, "Autoglym Car Polish", "High-gloss car polish for professional-grade shine", "Automotive", 1500, 10, 4.6, 200);
+
+
+ALTER TABLE orders ADD CONSTRAINT fkord_user FOREIGN KEY (Uid) REFERENCES user (Uid);
+ALTER TABLE cart ADD CONSTRAINT fkcart_user FOREIGN KEY (Uid) REFERENCES user (Uid);
+ALTER TABLE cart ADD CONSTRAINT fkcart_prod FOREIGN KEY (Pid) REFERENCES product (Pid);
+ALTER TABLE order_items ADD CONSTRAINT fkorditm_prod FOREIGN KEY (Pid) REFERENCES product (Pid);
+ALTER TABLE order_items ADD CONSTRAINT fkorditm_ord FOREIGN KEY (Oid) REFERENCES orders (Oid);
+
