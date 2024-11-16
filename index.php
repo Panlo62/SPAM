@@ -6,6 +6,7 @@
     <title>SPAM</title>
     <link rel="icon" href="images/favicon.ico">
     <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/home.css">
   </head>
   <body>
     <header>
@@ -46,12 +47,15 @@
         </ul>
       </nav>
     </header>
-    <!--
     <main>
-      <h1><img src="images/spam.png" alt="SPAM logo">SPAM</h1>
-      <p>One place for all your needs</p>
-      <button>Shop Now</button>
+      <div class="left">
+        <h1>SPAM</h1>
+        <p>"One place for all your needs"</p>
+        <button>Shop Now</button>
+      </div>
+      <div class="right">
+        <img src="images/home_img.webp" alt="Image with lots of items belonging to different categories">
+      </div>
     </main>
-    -->
   </body>
 </html>
