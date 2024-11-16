@@ -17,13 +17,15 @@ nav ul {
     display: flex;
 }
 
-nav ul#left li, ul#right li {
+nav li{
     padding: 20px;
 }
 
 nav .main {
     font-size: 150%;
     display: inline-block;
+    flex:1;
+    transform: translateX(25%);
 
     img {
         height: 100px;
