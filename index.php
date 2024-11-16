@@ -49,8 +49,8 @@
     </header>
     <main>
       <div class="left">
-        <h1>SPAM</h1>
-        <p>"One place for all your needs"</p>
+        <h1>One Place for All Your Needs</h1>
+        <p>Discover everything you’re looking for, from essentials to indulgences.</p>
         <button>Shop Now</button>
       </div>
       <div class="right">
