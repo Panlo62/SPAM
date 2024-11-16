@@ -27,7 +27,7 @@
             mysqli_close($conn);
           ?>
           <li>
-            More categories
+            More
           </li>
         </ul>
         <div class="main">
@@ -49,9 +49,9 @@
     </header>
     <main>
       <div class="left">
-        <h1>One Place for All Your Needs</h1>
+        <h1>One <i>Place</i> for All Your <i>Needs</i></h1>
         <p>Discover everything you’re looking for, from essentials to indulgences.</p>
-        <button>Shop Now</button>
+        <button>Shop New Arrivals</button>
       </div>
       <div class="right">
         <img src="images/home_img.webp" alt="Image with lots of items belonging to different categories">
