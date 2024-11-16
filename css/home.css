@@ -1,0 +1,39 @@
+main{
+    position: relative;
+    top: 10vh;
+    display: flex;
+}
+
+main .left{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-left: 5%;
+    margin-bottom: 5%;
+    width: 50vw;
+}
+
+main h1{
+    font-size: 400%;
+    margin-bottom: 5%;
+}
+
+main p{
+    font-size: 125%;
+    margin-bottom: 5%;
+}
+
+main button {
+    width: fit-content;
+    font-size: 100%;
+    padding: 10px;
+    color: white;
+    background-color: black;
+    border-radius: 20px;
+}
+
+main img{
+    float: right;
+    height: 90vh;
+    width: 50vw;
+}
