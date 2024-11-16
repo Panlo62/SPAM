@@ -13,11 +13,7 @@
       <nav>
         <ul id="left">
           <?php
-            $servername = "localhost";
-            $username = "root";
-            $password = "";
-            $database = "SPAM";
-            $conn = mysqli_connect($servername, $username, $password, $database);
+            $conn = mysqli_connect("localhost", "root", "", "spam");
             $sql = "SELECT category, count(pid) AS num_pid FROM product GROUP BY category ORDER BY num_pid DESC LIMIT 3";
             $result = mysqli_query($conn, $sql);
             while($row = mysqli_fetch_assoc($result)) {
@@ -34,15 +30,15 @@
           <b>Spam</b><img src="images/spam.png" alt="SPAM logo">
         </div>
         <ul id="right">
-					<li>
-            <input type="search" name="search" placeholder="Search item" style="display: none">
-            <img class="icon" src="images/search.png" alt="Search icon">
+          <li style="display: flex;">
+            <input type="search" name="search" placeholder="Search item">
+            <img id="search" class="icon" src="images/search.png" alt="Search icon">
           </li>
           <li>
             <a href="pages/dashboard.php"><img class="icon" src="images/user.png" alt="User icon"></a>
           </li>
           <li>
-        		<a href="pages/cart.php"><img class="icon" src="images/shopping-cart.png" alt="Cart icon"></a>
+            <a href="pages/cart.php"><img class="icon" src="images/shopping-cart.png" alt="Cart icon"></a>
           </li>
         </ul>
       </nav>
@@ -57,5 +53,18 @@
         <img src="images/home_img.webp" alt="Image with lots of items belonging to different categories">
       </div>
     </main>
+    <script>
+      const search = document.getElementById("search");
+      search.addEventListener("click", () => {
+        const searchInput = document.querySelector("input[type='search']");
+        if (searchInput.style.display === "") {
+          searchInput.style.display = "block";
+        }
+        else {
+          console.log(searchInput.style.display);
+        }
+      })
+
+    </script>
   </body>
 </html>
