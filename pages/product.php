@@ -68,7 +68,6 @@
                 $category = $row["category"];
                 echo "<label><input type='radio' name='category' value='$category'>$category</label><br>";
               }
-              mysqli_close($conn);
             ?>
           </div>
 
@@ -97,7 +96,47 @@
           </div>
         </form>
       </aside>
-    <main class="products"></main>
+      <main class="products">
+        <div class="second-header">
+          <form onsubmit="filter(event)">
+            <input type="text" placeholder="Search Item" name="searchQuery">
+            <input type="image" src="../images/search.png" height="50px">
+          </form>
+        </div>
+        <div class="product-grid">
+          <?php
+          $sql = "SELECT pid, name, description, category, price, discount, reviews FROM product";
+          $result = mysqli_query($conn, $sql);
+          if (mysqli_num_rows($result) > 0) {
+            while ($row = $result->fetch_assoc()) {
+              $pid = $row["pid"];
+              $name = $row["name"];
+              $category = $row["category"];
+              $description = $row["description"];
+              $price = (int)$row["price"];
+              $discount = $row["discount"];
+              $reviews = $row["reviews"];
+              $name = $row['name'];
+              $image = "../images/prod{$pid}a.png";
+              $finalPrice = (int)((100 - $row['discount'])/100 * $row['price']);
+              echo "<a href='../single_product.php?id=$pid'><div class='product-tab' style='background: url($image), #f2f2f2; background-size: cover; background-position: center;' title='$description'>";
+              echo "<div class='product-content'><h2>$name</h2>";
+              if ($finalPrice == $price) {
+                echo "<p><strong>Price:</strong> ₹$price</p>";
+              }
+              else {
+                echo "<p><strong>Price:</strong> <span class='final-price'>₹$finalPrice</span> <span class='original-price'>₹$price</span> <span class='discount'>($discount% off)</span></p>";
+              }
+              echo "<p><strong>Reviews:</strong> $reviews</p>";
+              echo "</div></div></a>";
+            }
+          } else {
+            echo "<p>No products available.</p>";
+          }
+          mysqli_close($conn);
+          ?>
+        </div>
+      </main>
     </div>
 
     <script>
