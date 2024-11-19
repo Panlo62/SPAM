@@ -18,7 +18,7 @@
             $result = mysqli_query($conn, $sql);
             while($row = mysqli_fetch_assoc($result)) {
               $category = $row["category"];
-              echo "<li>$category</li>";  //Call product page with category search
+              echo "<li><a href='pages/product.php?category=$category'>$category</a></li>";
             }
             mysqli_close($conn);
           ?>
@@ -43,6 +43,7 @@
         </ul>
       </nav>
     </header>
+
     <main>
       <div class="left">
         <h1>One <i>Place</i> for All Your <i>Needs</i></h1>
@@ -53,20 +54,32 @@
         <img src="images/home_img.webp" alt="Image with lots of items belonging to different categories">
       </div>
     </main>
+
     <script>
       const search = document.getElementById("search");
       const searchInput = document.querySelector("input[type='search']");
+
+      //Open the product.php page
+      const openPage = input => {
+        if (input !== "") {
+          window.location.href = `pages/product.php?search=${encodeURIComponent(input)}`;
+        }
+      }
+
+      //First click displays input box, second click opens product.php page
       search.addEventListener("click", () => {
         if (searchInput.style.display === "") {
           searchInput.style.display = "inline";
         }
         else {
-          //Call product page with search
+          openPage(searchInput.value.trim());
         }
       })
+
+      //Open product.php page when pressed enter
       searchInput.addEventListener("keydown", e => {
         if (e.key === "Enter") {
-          //Call product page with search
+          openPage(searchInput.value.trim());
         }
       })
     </script>
