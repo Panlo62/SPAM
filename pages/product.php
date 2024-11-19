@@ -4,9 +4,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SPAM</title>
-    <link rel="icon" href="images/favicon.ico">
-    <link rel="stylesheet" href="css/header.css">
-    <link rel="stylesheet" href="css/product.css">
+    <link rel="icon" href="../images/favicon.ico">
+    <link rel="stylesheet" href="../css/header.css">
+    <link rel="stylesheet" href="../css/product.css">
   </head>
   <body>
     <header>
@@ -18,49 +18,71 @@
             $result = mysqli_query($conn, $sql);
             while($row = mysqli_fetch_assoc($result)) {
               $category = $row["category"];
-              echo "<li>$category</li>";  //Call product page with category search
+              echo "<li><a href='../pages/product.php?category=$category'>$category</a></li>";
             }
             mysqli_close($conn);
           ?>
           <li>
-            <a href="pages/product.php">More</a>
+            <a href="../pages/product.php">More</a>
           </li>
         </ul>
         <div class="main">
-          <b>Spam</b><img src="images/spam.png" alt="SPAM logo">
+          <b>Spam</b><img src="../images/spam.png" alt="SPAM logo">
         </div>
         <ul id="right">
           <li style="display: flex;">
             <input type="search" name="search" placeholder="Search item">
-            <img id="search" class="icon" src="images/search.png" alt="Search icon">
+            <img id="search" class="icon" src="../images/search.png" alt="Search icon">
           </li>
           <li>
-            <a href="pages/dashboard.php"><img class="icon" src="images/user.png" alt="User icon"></a>
+            <a href="../pages/dashboard.php"><img class="icon" src="../images/user.png" alt="User icon"></a>
           </li>
           <li>
-            <a href="pages/cart.php"><img class="icon" src="images/shopping-cart.png" alt="Cart icon"></a>
+            <a href="../pages/cart.php"><img class="icon" src="../images/shopping-cart.png" alt="Cart icon"></a>
           </li>
         </ul>
       </nav>
     </header>
 
-    <main>
-    </main>
+    <?php
+      // Retrieve parameters from the URL
+      if (isset($_GET['category'])) {
+        $catgeory = htmlspecialchars($_GET['category']);
+        echo $category;
+      }
+      if (isset($_GET['search'])) {
+        $input = htmlspecialchars($_GET['search']);
+        echo $input;
+      }
+    ?>
+
+    <div class="content">
+    <aside>Filter</aside>
+    <main>Products</main>
+    </div>
 
     <script>
       const search = document.getElementById("search");
       const searchInput = document.querySelector("input[type='search']");
+
+      //First click displays input box, second click for search
       search.addEventListener("click", () => {
         if (searchInput.style.display === "") {
           searchInput.style.display = "inline";
         }
         else {
-          //Call product page with search
+          if (searchInput.value.trim() !== "") {
+            $input = searchInput.value.trim();   //Php input to this value and change search
+          }
         }
       })
+
+      //Search product when pressed enter
       searchInput.addEventListener("keydown", e => {
         if (e.key === "Enter") {
-          //Call product page with search
+          if (searchInput.value.trim() !== "") {
+            $input = searchInput.value.trim();   //Php input to this value and change search
+          }
         }
       })
     </script>
