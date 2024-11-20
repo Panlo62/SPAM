@@ -1,0 +1,10 @@
+main a {
+    text-decoration: none;
+    color: black;
+}
+
+main {
+    position: fixed;
+    overflow-y: auto;
+    top: 10vh;
+}
