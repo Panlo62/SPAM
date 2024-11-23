@@ -18,12 +18,12 @@ session_start();
 if (isset($_POST['register'])) {
     $reg_username = $_POST['reg_username'];
     $reg_email = $_POST['reg_email'];
-    $reg_phone_no = $_POST['reg_phone_no.'];
+    $reg_phone = $_POST['reg_phone'];
     $reg_address = $_POST['reg_address'];
     $reg_password = password_hash($_POST['reg_password'], PASSWORD_BCRYPT);
 
-    $stmt = $conn->prepare("INSERT INTO users (Username,Password,Phone ,Email, password) VALUES (?, ?, ?,?,?)");
-    $stmt->bind_param("sss", $reg_username, $reg_email, $reg_password);
+    $stmt = $conn->prepare("INSERT INTO user (Username,Password,Phone ,Email,Address) VALUES (?, ?, ?,?,?)");
+    $stmt->bind_param("sss", $reg_username, $reg_password,$reg_Phone, $reg_email,$reg_address);
 
     if ($stmt->execute()) {
         $success = "Registration successful! Please log in.";
@@ -36,7 +36,7 @@ if (isset($_POST['register'])) {
 
 // Handle login
 if (isset($_POST['login'])) {
-    $login_username = $_POST['login_phone_no'];
+    $login_phone_no = $_POST['login_phone_no'];
     $login_password = $_POST['login_password'];
 
     $stmt = $conn->prepare("SELECT id, password FROM users WHERE username = ?");
@@ -49,8 +49,8 @@ if (isset($_POST['login'])) {
         $stmt->fetch();
 
         if (password_verify($login_password, $hashed_password)) {
-            $_SESSION['user_id'] = $user_id;
-            $_SESSION['username'] = $login_phone_no;
+            $_SESSION['Phone'] = $login_phone_no;
+            $_SESSION['Password'] = $login_password;
             header("Location: pages/dashboard.php");
             exit();
         } else {
@@ -152,10 +152,10 @@ $conn->close();
         <form method="POST">
             <input type="text" name="reg_username" placeholder="Username" required>
             <input type="email" name="reg_email" placeholder="Email" required>
-            <input type="tel" name="reg_phone_no." placeholder="Phone" required>
+            <input type="tel" name="reg_phone" placeholder="Phone" required>
             <input type="text" name="reg_address" placeholder="Address" required>
             <input type="password" name="reg_password" placeholder="Password" required>
-            <input type="password" name="reg_con_password" placeholder="Confirm Password" required>
+            <input type="password" name="reg_con_password" placeholder="Confirm Password" required> -->
             <button type="submit" name="register">Register</button>
         </form>
         <p>Already have an account? <a href="#" onclick="toggleForm('login')">Login</a></p>
