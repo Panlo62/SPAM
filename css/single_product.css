@@ -1,10 +1,56 @@
-main a {
-    text-decoration: none;
-    color: black;
-}
 
 main {
     position: fixed;
     overflow-y: auto;
     top: 10vh;
 }
+
+.products {
+    position: fixed;
+    top: 10%;  
+    right: 0;
+    height: 90%;
+    width: 95%;
+    padding: 1px;
+    overflow-y: auto;
+}
+
+.figure {
+float: left;
+margin-right: 2em; 
+margin-bottom: 2em;
+height: 98%;
+width: 60%;
+}
+
+.figure img {
+height: 18em;
+width: 17em;
+margin: 2em;
+}
+
+.fig-cap { 
+float: left;
+display: block;
+font-weight: bold; 
+padding-top: 1em;
+margin-top: 3em;
+margin-bottom: 1em;
+line-height: 1.5;
+} 
+
+.final-price {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.original-price {
+    text-decoration: line-through;
+}
+
+.discount {
+    color: #dc3545;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+

@@ -55,7 +55,7 @@
         $description = $row["description"];
         $category = $row["category"];
         $price = (int)$row["price"];
-        $discount = $row["discount"];
+        $discount = (int)$row["discount"];
         $reviews = $row["reviews"];
         $inventory = $row["inventory"];
         $images = ["../images/prod{$pid}a.jpg", "../images/prod{$pid}b.jpg", "../images/prod{$pid}c.jpg", "../images/prod{$pid}d.jpg"];
@@ -64,8 +64,25 @@
       mysqli_close($conn);
     ?>
 
-    <main>
-        <h1><?php echo $name;?></h1>
+    <main class = 'products'>
+        <div class = 'figure'>
+          <?php echo "<img src = '$images[0]', alt = 'Product image 1'>
+          <img src = '$images[1]', alt = 'Product image 2'><br>
+          <img src = '$images[2]', alt = 'Product image 3'>
+          <img src = '$images[3]', alt = 'Product image 4'><br>";?>
+        </div>
+        <div class = 'fig-cap'> 
+         <?php echo "<h1>$name</h1> Reviews: $reviews<br> $description <br>";
+        if ($finalPrice == $price) {
+          echo "<p><strong>Price:</strong> ₹$price</p>";
+        }
+        else {
+          echo "<span class='discount'><b>-$discount% </b></span> <span class='final-price'>₹$finalPrice</span> 
+          <br> MRP: <span class='original-price'>₹$price</span>";
+        }?><br>
+        Quantity: <input type = "number" value = 1 id = "quan"><br><br>
+        <button type = "submit"> <img src="../images/shopping-cart.png" width="30" height="23" 
+        alt = "Add to Cart">Add to Cart &nbsp;</button></div>
     </main>
 
     <script>
