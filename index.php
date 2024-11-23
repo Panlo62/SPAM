@@ -18,7 +18,8 @@
             $result = mysqli_query($conn, $sql);
             while($row = mysqli_fetch_assoc($result)) {
               $category = $row["category"];
-              echo "<li><a href='pages/product.php?category=$category'>$category</a></li>";
+              $encodedCategory = rawurlencode($category);
+              echo "<li><a href='pages/product.php?category=$encodedCategory'>$category</a></li>";
             }
             mysqli_close($conn);
           ?>
@@ -27,7 +28,7 @@
           </li>
         </ul>
         <div class="main">
-          <b>Spam</b><img src="images/spam.png" alt="SPAM logo">
+          <img src="images/spam.png" alt="SPAM logo">
         </div>
         <ul id="right">
           <li style="display: flex;">

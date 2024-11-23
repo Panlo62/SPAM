@@ -18,7 +18,8 @@
             $result = mysqli_query($conn, $sql);
             while($row = mysqli_fetch_assoc($result)) {
               $category = $row["category"];
-              echo "<li><a href='../pages/product.php?category=$category'>$category</a></li>";
+              $encodedCategory = rawurlencode($category);
+              echo "<li><a href='../pages/product.php?category=$encodedCategory'>$category</a></li>";
             }
           ?>
           <li>
@@ -26,7 +27,7 @@
           </li>
         </ul>
         <div class="main">
-          <b>Spam</b><img src="../images/spam.png" alt="SPAM logo">
+          <img src="../images/spam.png" alt="SPAM logo">
         </div>
         <ul id="right">
           <li style="display: flex;">
@@ -45,13 +46,41 @@
 
     <?php
       // Retrieve parameters from the URL
+      $category = "";
+      $price = "";
+      $rating = "";
+      $searchInput = "";
+      $query = "";
       if (isset($_GET['category'])) {
-        $catgeory = htmlspecialchars($_GET['category']);
-        echo $category;
+        $query .= " WHERE ";
+        $category = $_GET['category'];
+        $query .= "category = '{$category}'";
+      }
+      if (isset($_GET['price'])) {
+        if ($query) {
+          $query .= " AND ";
+        }
+        else {
+          $query .= " WHERE ";
+        }
+        $price = htmlspecialchars($_GET['price']);
+        $minPrice = $price - 10000;
+        $query .= "price - (price * discount / 100) BETWEEN $minPrice AND $price";
+      }
+      if (isset($_GET['rating'])) {
+        if ($query) {
+          $query .= " AND ";
+        }
+        else {
+          $query .= " WHERE ";
+        }
+        $rating = htmlspecialchars($_GET['rating']);
+        $query .= "reviews >= $rating";
       }
       if (isset($_GET['search'])) {
-        $input = htmlspecialchars($_GET['search']);
-        echo $input;
+        $query .= " WHERE ";
+        $searchInput = htmlspecialchars($_GET['search']);
+        $query .= "name LIKE '%{$searchInput}%' OR description LIKE '%{$searchInput}%'";
       }
     ?>
 
@@ -65,8 +94,8 @@
               $sql = "SELECT DISTINCT category FROM product";
               $result = mysqli_query($conn, $sql);
               while($row = mysqli_fetch_assoc($result)) {
-                $category = $row["category"];
-                echo "<label><input type='radio' name='category' value='$category'>$category</label><br>";
+                $Category = $row["category"];
+                echo "<label><input type='radio' name='category' value='$Category'>$Category</label><br>";
               }
             ?>
           </div>
@@ -92,28 +121,27 @@
 
           <div class="filter-buttons">
             <button type="submit" class="apply-filters">Apply Filters</button>
-            <button type="reset" class="reset-filters">Reset</button>
+            <button type="" class="reset-filters" onclick="remove(event)">Reset</button>
           </div>
         </form>
       </aside>
       <main class="products">
         <div class="second-header">
           <form onsubmit="filter(event)">
-            <input type="text" placeholder="Search Item" name="searchQuery">
-            <input type="image" src="../images/search.png" height="50px">
+            <input type="text" placeholder="Search Item" name="searchInput">
+            <input type="image" id="searchBarIcon" src="../images/search.png" height="50px">
           </form>
         </div>
         <div class="product-grid">
           <?php
-          $sql = "SELECT pid, name, description, category, price, discount, reviews FROM product";
+          $sql = "SELECT pid, name, description, price, discount, reviews FROM product" . $query;
           $result = mysqli_query($conn, $sql);
           if (mysqli_num_rows($result) > 0) {
             while ($row = $result->fetch_assoc()) {
               $pid = $row["pid"];
               $name = $row["name"];
-              $category = $row["category"];
               $description = $row["description"];
-              $price = (int)$row["price"];
+              $Price = (int)$row["price"];
               $discount = $row["discount"];
               $reviews = $row["reviews"];
               $name = $row['name'];
@@ -121,17 +149,21 @@
               $finalPrice = (int)((100 - $row['discount'])/100 * $row['price']);
               echo "<a href='../pages/single_product.php?id=$pid'><div class='product-tab' style='background: url($image), #f2f2f2; background-size: cover; background-position: center;' title='$description'>";
               echo "<div class='product-content'><h2>$name</h2>";
-              if ($finalPrice == $price) {
-                echo "<p><strong>Price:</strong> ₹$price</p>";
+              if ($finalPrice == $Price) {
+                echo "<p><strong>Price:</strong> ₹$Price</p>";
               }
               else {
-                echo "<p><strong>Price:</strong> <span class='final-price'>₹$finalPrice</span> <span class='original-price'>₹$price</span> <span class='discount'>($discount% off)</span></p>";
+                echo "<p><strong>Price:</strong> <span class='final-price'>₹$finalPrice</span> <span class='original-price'>₹$Price</span> <span class='discount'>($discount% off)</span></p>";
               }
               echo "<p><strong>Reviews:</strong> $reviews</p>";
               echo "</div></div></a>";
             }
           } else {
-            echo "<p>No products available.</p>";
+            echo '<div class="no_prod"><div>';
+            echo '<img src="../images/noprod.png" alt="No products icon" style="width: 100px; margin-bottom: 10px;">';
+            echo '<p>No products available for the selected filters.</p><br>';
+            echo '<a href="../pages/product.php" style="color: #007BFF; text-decoration: none; font-weight: bold;">Explore Other Categories</a>';
+            echo '</div></div';
           }
           mysqli_close($conn);
           ?>
@@ -142,31 +174,85 @@
     <script>
       const search = document.getElementById("search");
       const searchInput = document.querySelector("input[type='search']");
+      const searchBar = document.querySelector('input[name="searchInput"]');
+      const searchBarIcon = document.getElementById("searchBarIcon");
 
-      //First click displays input box, second click for search
+      if ("<?php echo $searchInput ?>") {
+        searchBar.value = "<?php echo $searchInput ?>";
+      }
+      const searchStart= searchBar.value;
+
+      if ("<?php echo $category?>") {
+        document.querySelector('input[name="category"][value="<?php echo $category?>"]').checked = true;
+      }
+      if ("<?php echo $price?>") {
+        document.querySelector('input[name="price"][value="<?php echo $price?>"]').checked = true;
+      }
+      if ("<?php echo $rating?>") {
+        document.querySelector('input[name="rating"][value="<?php echo $rating?>"]').checked = true;
+      } 
+
+      //Open the product.php page
+      const openPage = input => {
+        if (input !== "") {
+          window.location.href = `../pages/product.php?search=${encodeURIComponent(input)}`;
+        }
+      }
+
+      //First click displays input box, second click opens product.php page
       search.addEventListener("click", () => {
         if (searchInput.style.display === "") {
           searchInput.style.display = "inline";
         }
         else {
-          if (searchInput.value.trim() !== "") {
-            $input = searchInput.value.trim();   //Php input to this value and change search
-          }
+          openPage(searchInput.value.trim());
         }
       })
+      searchBarIcon.addEventListener("click", () => {
+        filter(event);
+      })
 
-      //Search product when pressed enter
+      //Open product.php page when pressed enter
       searchInput.addEventListener("keydown", e => {
         if (e.key === "Enter") {
-          if (searchInput.value.trim() !== "") {
-            $input = searchInput.value.trim();   //Php input to this value and change search
-          }
+          openPage(searchInput.value.trim());
         }
       })
 
       const filter = event => {
         event.preventDefault();
-        console.log(event);
+        const category = document.querySelector('input[name="category"]:checked');
+        const price = document.querySelector('input[name="price"]:checked');
+        const rating = document.querySelector('input[name="rating"]:checked');
+        let query = '';
+        if (searchBar.value.trim() !== searchStart) {
+          window.location.href = `../pages/product.php?search=${searchBar.value.trim()}`;
+        }
+        else {
+          if (category) {
+            query += "category="+encodeURIComponent(category.value);
+          }
+          if (price) {
+            if (query) {
+              query += "&";
+            }
+            query += "price="+price.value;
+          }
+          if (rating) {
+            if (query) {
+              query += "&";
+            }
+            query += "rating="+rating.value;
+          }
+          if (query) {
+            window.location.href = `../pages/product.php?`+query;
+          }
+        }
+      }
+
+      const remove = event => {
+        event.preventDefault();
+        window.location.href = `../pages/product.php`;
       }
     </script>
   </body>

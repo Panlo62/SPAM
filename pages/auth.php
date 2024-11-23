@@ -16,14 +16,16 @@ session_start();
 
 // Handle registration
 if (isset($_POST['register'])) {
-    $reg_username = $_POST['reg_username'];
-    $reg_email = $_POST['reg_email'];
-    $reg_phone_no = $_POST['reg_phone_no.'];
-    $reg_address = $_POST['reg_address'];
-    $reg_password = password_hash($_POST['reg_password'], PASSWORD_BCRYPT);
+    $reg_username = $_POST['username'];
+    $reg_password = password_hash($_POST['password'], PASSWORD_BCRYPT);
+    $reg_phone = $_POST['phone'];
+    $reg_address = $_POST['address'];
+    $reg_email = $_POST['email'];
+    $reg_security_question = $_POST['sec_ques'];
+    $reg_security_answer = password_hash($_POST['Ans'], PASSWORD_BCRYPT);
 
-    $stmt = $conn->prepare("INSERT INTO users (username, email,phone_no ,address, password) VALUES (?, ?, ?,?,?)");
-    $stmt->bind_param("sss", $reg_username, $reg_email, $reg_password);
+    $stmt = $conn->prepare("INSERT INTO user (username, password, phone, address, email, sec_ques, Ans) VALUES (?, ?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("sssssss", $reg_username, $reg_password, $reg_phone, $reg_address, $reg_email, $reg_security_question, $reg_security_answer);
 
     if ($stmt->execute()) {
         $success = "Registration successful! Please log in.";
@@ -36,28 +38,28 @@ if (isset($_POST['register'])) {
 
 // Handle login
 if (isset($_POST['login'])) {
-    $login_username = $_POST['login_phone_no'];
-    $login_password = $_POST['login_password'];
+    $login_phone = $_POST['phone'];
+    $login_password = $_POST['password'];
 
-    $stmt = $conn->prepare("SELECT id, password FROM users WHERE username = ?");
-    $stmt->bind_param("s", $login_phone_no);
+    $stmt = $conn->prepare("SELECT phone, username, password FROM user WHERE phone = ?");
+    $stmt->bind_param("s", $login_phone);
     $stmt->execute();
     $stmt->store_result();
 
     if ($stmt->num_rows > 0) {
-        $stmt->bind_result($user_id, $hashed_password);
+        $stmt->bind_result($user_phone, $user_name, $hashed_password);
         $stmt->fetch();
 
         if (password_verify($login_password, $hashed_password)) {
-            $_SESSION['user_id'] = $user_id;
-            $_SESSION['username'] = $login_phone_no;
-            header("Location: pages/dashboard.php");
+            $_SESSION['user_id'] = $user_phone;
+            $_SESSION['username'] = $user_name;
+            header("Location: dashboard.php");
             exit();
         } else {
             $error = "Invalid password.";
         }
     } else {
-        $error = "User not found.";
+        $error = "Phone number not found.";
     }
 
     $stmt->close();
@@ -83,7 +85,7 @@ $conn->close();
             background: #f4f4f4;
         }
         .container {
-            width: 300px;
+            width: 400px;
             padding: 20px;
             background: #fff;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -97,7 +99,7 @@ $conn->close();
             display: flex;
             flex-direction: column;
         }
-        input {
+        input, select {
             margin-bottom: 15px;
             padding: 10px;
             border: 1px solid #ccc;
@@ -135,27 +137,33 @@ $conn->close();
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="container" id="login-container">
         <h2>Login</h2>
         <?php if (isset($error)) echo "<p class='error'>$error</p>"; ?>
         <?php if (isset($success)) echo "<p class='success'>$success</p>"; ?>
         <form method="POST">
-            <input type="tel" name="login_phone_no" placeholder="Phone no" required>
-            <input type="password" name="login_password" placeholder="Password" required>
+            <input type="text" name="phone" placeholder="Phone Number" required>
+            <input type="password" name="password" placeholder="Password" required>
             <button type="submit" name="login">Login</button>
         </form>
         <p>Don't have an account? <a href="#" onclick="toggleForm('register')">Register</a></p>
     </div>
 
-    <div class="container" style="display: none;" id="register-container">
+    <div class="container" id="register-container" style="display: none;">
         <h2>Register</h2>
         <form method="POST">
-            <input type="text" name="reg_username" placeholder="Username" required>
-            <input type="email" name="reg_email" placeholder="Email" required>
-            <input type="tel" name="reg_phone_no." placeholder="phone no." required>
-            <input type="text" name="reg_address" placeholder="address" required>
-            <input type="password" name="reg_password" placeholder="Password" required>
-            <input type="password" name="reg_con_password" placeholder="Confirm Password" required>
+            <input type="text" name="username" placeholder="Username" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <input type="text" name="phone" placeholder="Phone Number" required>
+            <input type="text" name="address" placeholder="Address" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <select name="sec_ques" required>
+                <option value="" disabled selected>Select a Security Question</option>
+                <option value="What is your mother's maiden name?">What is your mother's maiden name?</option>
+                <option value="What was your first pet's name?">What was your first pet's name?</option>
+                <option value="What is your favorite book?">What is your favorite book?</option>
+            </select>
+            <input type="text" name="Ans" placeholder="Security Answer" required>
             <button type="submit" name="register">Register</button>
         </form>
         <p>Already have an account? <a href="#" onclick="toggleForm('login')">Login</a></p>
@@ -163,7 +171,7 @@ $conn->close();
 
     <script>
         function toggleForm(formType) {
-            document.querySelector('.container').style.display = formType === 'login' ? 'block' : 'none';
+            document.getElementById('login-container').style.display = formType === 'login' ? 'block' : 'none';
             document.getElementById('register-container').style.display = formType === 'register' ? 'block' : 'none';
         }
     </script>
