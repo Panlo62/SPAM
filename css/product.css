@@ -163,3 +163,14 @@ main a {
     text-decoration: none;
     color: black;
 }
+
+.no_prod {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 20em;
+    width : 60em;
+    font-size: 1.5rem;
+    text-align: center;
+}
+ 
