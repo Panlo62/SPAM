@@ -22,7 +22,7 @@ if (isset($_POST['register'])) {
     $reg_address = $_POST['reg_address'];
     $reg_password = password_hash($_POST['reg_password'], PASSWORD_BCRYPT);
 
-    $stmt = $conn->prepare("INSERT INTO users (username, email,phone_no ,address, password) VALUES (?, ?, ?,?,?)");
+    $stmt = $conn->prepare("INSERT INTO users (Username,Password,Phone ,Email, password) VALUES (?, ?, ?,?,?)");
     $stmt->bind_param("sss", $reg_username, $reg_email, $reg_password);
 
     if ($stmt->execute()) {
@@ -152,8 +152,8 @@ $conn->close();
         <form method="POST">
             <input type="text" name="reg_username" placeholder="Username" required>
             <input type="email" name="reg_email" placeholder="Email" required>
-            <input type="tel" name="reg_phone_no." placeholder="phone no." required>
-            <input type="text" name="reg_address" placeholder="address" required>
+            <input type="tel" name="reg_phone_no." placeholder="Phone" required>
+            <input type="text" name="reg_address" placeholder="Address" required>
             <input type="password" name="reg_password" placeholder="Password" required>
             <input type="password" name="reg_con_password" placeholder="Confirm Password" required>
             <button type="submit" name="register">Register</button>
