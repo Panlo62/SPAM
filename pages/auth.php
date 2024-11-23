@@ -41,17 +41,17 @@ if (isset($_POST['login'])) {
     $login_phone = $_POST['phone'];
     $login_password = $_POST['password'];
 
-    $stmt = $conn->prepare("SELECT id, username, password FROM users WHERE phone = ?");
+    $stmt = $conn->prepare("SELECT phone, username, password FROM user WHERE phone = ?");
     $stmt->bind_param("s", $login_phone);
     $stmt->execute();
     $stmt->store_result();
 
     if ($stmt->num_rows > 0) {
-        $stmt->bind_result($user_id, $user_name, $hashed_password);
+        $stmt->bind_result($user_phone, $user_name, $hashed_password);
         $stmt->fetch();
 
         if (password_verify($login_password, $hashed_password)) {
-            $_SESSION['user_id'] = $user_id;
+            $_SESSION['user_id'] = $user_phone;
             $_SESSION['username'] = $user_name;
             header("Location: dashboard.php");
             exit();
