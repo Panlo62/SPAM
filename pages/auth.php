@@ -155,7 +155,7 @@ $conn->close();
             <input type="tel" name="reg_phone" placeholder="Phone" required>
             <input type="text" name="reg_address" placeholder="Address" required>
             <input type="password" name="reg_password" placeholder="Password" required>
-            <input type="password" name="reg_con_password" placeholder="Confirm Password" required> -->
+            <input type="password" name="reg_con_password" placeholder="Confirm Password" required>
             <button type="submit" name="register">Register</button>
         </form>
         <p>Already have an account? <a href="#" onclick="toggleForm('login')">Login</a></p>
