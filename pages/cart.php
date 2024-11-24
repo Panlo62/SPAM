@@ -61,7 +61,7 @@
         $result = mysqli_query($conn, $sql);
         if (mysqli_num_rows($result) > 0) {
           echo "<div class='cart-items'>";
-          while ($row = $result->fetch_assoc()) {
+          while ($row = mysqli_fetch_assoc($result)) {
             $pid = $row["pid"];
             $quantity = $row["quantity"];
             $name = $row["name"];
