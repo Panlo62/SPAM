@@ -8,6 +8,10 @@
         $qty = intval($input['qty']);
         $sql = "UPDATE cart SET quantity = $qty WHERE pid = $id AND uid = $uid";
         mysqli_query($conn, $sql);
+        if (mysqli_affected_rows($conn) == 0) {
+            $sql = "INSERT INTO cart VALUES ($id, $uid, $qty)";
+            mysqli_query($conn, $sql);
+        }
     }
     mysqli_close($conn);
 ?>
