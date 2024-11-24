@@ -133,12 +133,12 @@
     text-overflow: ellipsis;
 }
 
-.product-tab p {
+.product-tab p, .product-tab .ratings {
     color: #555;
     margin: 5px;
 }
 
-.product-tab p strong {
+.product-tab p strong, .product-tab .ratings strong{
     color: #000;
 }
 
@@ -173,4 +173,21 @@ main a {
     font-size: 1.5rem;
     text-align: center;
 }
- 
+
+.ratings {
+    display: flex;
+    align-items: baseline;
+}
+
+.ratings > span {
+    margin-left: 5px;
+}
+
+.star {
+    margin-left: 3px;
+}
+
+.rating-number {
+    margin-left: 5px;
+    color: #333;
+}
