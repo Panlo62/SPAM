@@ -73,7 +73,7 @@
             echo "<div class='cart-item'>";
             echo "<a href='../pages/single_product.php?id=$pid'><img src='$image' alt='$name'></a>";
             echo "<p class='item-name'>$name</p>";
-            echo "<p class='item-price'>₹$finalPrice per unit</p>";
+            echo "<p class='item-price'>₹ $finalPrice per unit</p>";
             echo "<div class='quantity-control'>";
             echo "<button class='decrease-qty'>-</button>";
             echo "<input id='$pid' type='text' value='$quantity' max='$inventory' readonly>";
@@ -171,13 +171,17 @@
 
       document.querySelector('.purchase').addEventListener('click', () => {
         const items = document.querySelectorAll('.cart-item');
+        let cost = 0;
         const cartData = Array.from(items).map(item => {
             const id = item.querySelector('input').id;
             const quantity = item.querySelector('input').value;
-            return {id, quantity };
+            const price = item.querySelector('.item-price').innerText.substr(1);
+            cost += parseInt(quantity) * parseInt(price);
+            console.log(cost, quantity, price);
+            return {id, quantity};
         });
 
-        alert('Purchase successful!');
+        alert('Purchase successful! Total amount : ₹' + cost);
         updateProduct(cartData);
         removeDb();
         window.location.href = "../pages/cart.php";
