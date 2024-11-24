@@ -73,7 +73,7 @@
             echo "<div class='cart-item'>";
             echo "<a href='../pages/single_product.php?id=$pid'><img src='$image' alt='$name'></a>";
             echo "<p class='item-name'>$name</p>";
-            echo "<p class='item-price'>₹$finalPrice</p>";
+            echo "<p class='item-price'>₹$finalPrice per unit</p>";
             echo "<div class='quantity-control'>";
             echo "<button class='decrease-qty'>-</button>";
             echo "<input id='$pid' type='text' value='$quantity' max='$inventory' readonly>";
