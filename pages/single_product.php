@@ -26,7 +26,7 @@
           </li>
         </ul>
         <div class="main">
-          <b>Spam</b><img src="../images/spam.png" alt="SPAM logo">
+          <img src="../images/spam.png" alt="SPAM logo">
         </div>
         <ul id="right">
           <li style="display: flex;">
