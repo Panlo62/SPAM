@@ -18,7 +18,8 @@
             $result = mysqli_query($conn, $sql);
             while($row = mysqli_fetch_assoc($result)) {
               $category = $row["category"];
-              echo "<li><a href='../pages/product.php?category=$category'>$category</a></li>";
+              $encodedCategory = rawurlencode($category);
+              echo "<li><a href='../pages/product.php?category=$encodedCategory'>$category</a></li>";
             }
           ?>
           <li>
@@ -26,7 +27,7 @@
           </li>
         </ul>
         <div class="main">
-          <b>Spam</b><img src="../images/spam.png" alt="SPAM logo">
+          <img src="../images/spam.png" alt="SPAM logo">
         </div>
         <ul id="right">
           <li style="display: flex;">
@@ -53,7 +54,6 @@
         $pid = $row["pid"];
         $name = $row["name"];
         $description = $row["description"];
-        $category = $row["category"];
         $price = (int)$row["price"];
         $discount = (int)$row["discount"];
         $reviews = $row["reviews"];
@@ -64,30 +64,59 @@
       mysqli_close($conn);
     ?>
 
-    <main class = 'products'>
-        <div class = 'figure'>
-          <?php echo "<img src = '$images[0]', alt = 'Product image 1'>
-          <img src = '$images[1]', alt = 'Product image 2'><br>
-          <img src = '$images[2]', alt = 'Product image 3'>
-          <img src = '$images[3]', alt = 'Product image 4'><br>";?>
+    <main>
+      <div class="product-images">
+        <div class="main-image">
+          <img src=<?php echo $images[0] ?> alt="Main Product Image" id="main-image">
         </div>
-        <div class = 'fig-cap'> 
-         <?php echo "<h1>$name</h1> Reviews: $reviews<br> $description <br>";
-        if ($finalPrice == $price) {
-          echo "<p><strong>Price:</strong> ₹$price</p>";
-        }
-        else {
-          echo "<span class='discount'><b>-$discount% </b></span> <span class='final-price'>₹$finalPrice</span> 
-          <br> MRP: <span class='original-price'>₹$price</span>";
-        }?><br>
-        Quantity: <input type = "number" value = 1 id = "quan"><br><br>
-        <button type = "submit"> <img src="../images/shopping-cart.png" width="30" height="23" 
-        alt = "Add to Cart">Add to Cart &nbsp;</button></div>
+        <div class="image-thumbnails">
+          <?php foreach ($images as $img) {
+              echo "<img src=$img alt='$name image' onclick='changeImage(\"{$img}\")'>";
+            }
+          ?>
+        </div>
+      </div>
+      <div class="product-details">
+        <h1 id="product-name"><?php echo $name ?></h1>
+        <p id="product-description"><?php echo $description ?></p>
+        <div class="ratings">
+          <?php $i = 1;
+          for (; $i < $reviews; $i++) {
+            echo "<span class='star'>&#x2605;</span>";
+          }
+          if ($reviews < $i && $reviews > $i-1) {
+            $fill = ($reviews - $i + 1)*100;
+            echo "<span class='star' style='background: linear-gradient(90deg, black $fill%, #ddd $fill%); background-clip: text; color: transparent;'>&#x2605;</span>";
+          }
+          for (; $i < 5; $i++) {
+            echo "<span class='star' style='color: #ddd;'>&#x2605;</span>";
+          }
+          ?>
+          <span class="rating-number">(<?php echo $reviews ?>/5)</span>
+        </div>
+        <div class="product-pricing">
+          <p class="original-price">₹<span id="original-price"><?php echo $price ?></span></p>
+          <p class="discount-price">₹<span id="discount-price"><?php echo $finalPrice ?></span></p>
+          <p class="discount-percentage">(<?php echo $discount ?>% off)</p>
+        </div>
+        <button class="add-to-cart-btn">Add to Cart</button>
+      </div>
     </main>
 
     <script>
+      function changeImage(imageUrl) {
+        mainImage = document.getElementById('main-image').src = imageUrl;
+      }
+
       const search = document.getElementById("search");
       const searchInput = document.querySelector("input[type='search']");
+
+      //Open the product.php page
+      const openPage = input => {
+        if (input !== "") {
+          window.location.href = `../pages/product.php?search=${encodeURIComponent(input)}`;
+        }
+      }
 
       //First click displays input box, second click for search
       search.addEventListener("click", () => {
@@ -96,7 +125,7 @@
         }
         else {
           if (searchInput.value.trim() !== "") {
-            $input = searchInput.value.trim();   //Php input to this value and change search
+            openPage(searchInput.value.trim());
           }
         }
       })
@@ -105,7 +134,7 @@
       searchInput.addEventListener("keydown", e => {
         if (e.key === "Enter") {
           if (searchInput.value.trim() !== "") {
-            $input = searchInput.value.trim();   //Php input to this value and change search
+            openPage(searchInput.value.trim());
           }
         }
       })
