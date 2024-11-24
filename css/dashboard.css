@@ -1,0 +1,153 @@
+main {
+    position: fixed;
+    top: 10vh;
+    overflow-y: auto;
+    background-color: #f4f4f4;
+    width: 100vw;
+    height: 100vh;
+}
+
+.dashboard-container {
+    position: relative;
+    top: 1vh;
+    display: flex;
+    width: 50%;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    margin: 0 auto;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.user-info-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.user-info-left {
+    flex: 1;
+    padding-right: 20px;
+    text-align: left;
+}
+
+.user-info-right {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.user-photo {
+    width: 120px;
+    height: 120px;
+    margin-bottom: 10px;
+}
+
+.user-name {
+    font-size: 30px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.user-address, .user-phone, .user-email {
+    font-size: 18px;
+    margin: 5px;
+}
+
+.add-to-cart-btn {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.add-to-cart-btn:hover {
+    background-color: #0056b3;
+}
+
+.purchasing-history {
+    width: 100%;
+    margin-top: 20px;
+}
+
+.cart-item {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+    padding: 15px;
+    margin-bottom: 10px;
+}
+
+.item-name {
+    font-size: 18px;
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.item-price {
+    font-size: 16px;
+    color: #333;
+    margin-right: 30px;
+}
+
+.quantity-controls {
+    display: flex;
+    align-items: center;
+}
+
+.view-cart-button {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.view-cart-button:hover {
+    background-color: #c0392b;
+}
+
+.quantity-controls button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.quantity-controls button:hover {
+    background-color: #0056b3;
+}
+
+.quantity-controls input {
+    width: 50px;
+    text-align: center;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin: 0 10px;
+}
+
+.quantity-controls button.confirm-btn {
+    background-color: #17a2b8;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-left: 10px;
+}
+
+.quantity-controls button.confirm-btn:hover {
+    background-color: #117a8b;
+}
