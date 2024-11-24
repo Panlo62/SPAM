@@ -1,5 +1,3 @@
-
-
 <!doctype html>
 <html lang=en>
   <head>
@@ -8,10 +6,7 @@
     <title>SPAM</title>
     <link rel="icon" href="../images/favicon.ico">
     <link rel="stylesheet" href="../css/header.css">
-    <link rel="stylesheet" href="../css/product.css">
     <link rel="stylesheet" href="../css/cart.css">
-    
-
   </head>
   <body>
     <header>
@@ -23,7 +18,8 @@
             $result = mysqli_query($conn, $sql);
             while($row = mysqli_fetch_assoc($result)) {
               $category = $row["category"];
-              echo "<li><a href='../pages/product.php?category=$category'>$category</a></li>";
+              $encodedCategory = rawurlencode($category);
+              echo "<li><a href='../pages/product.php?category=$encodedCategory'>$category</a></li>";
             }
           ?>
           <li>
@@ -31,7 +27,7 @@
           </li>
         </ul>
         <div class="main">
-          <b>Spam</b><img src="../images/spam.png" alt="SPAM logo">
+          <img src="../images/spam.png" alt="SPAM logo">
         </div>
         <ul id="right">
           <li style="display: flex;">
@@ -47,86 +43,166 @@
         </ul>
       </nav>
     </header>
+    
+    <?php
+      //Check if user is logged in
+      session_start();
+      if (!isset($_SESSION['uid'])) {
+        header("Location: ../pages/auth.php");
+        exit();
+      }
+    ?>
 
-    <main class="products">
-        <p>cart items</p>
-        <div class="product-grid">
-        <?php
-          $uid = 2;
-          $sql = "SELECT product.pid, product.name, product.price,product.reviews,product.discount,product.category,product.description, cart.quantity
-                  FROM cart
-                  JOIN product ON cart.pid = product.pid
-                  WHERE cart.Uid = ?";
-          
-          $stmt = mysqli_prepare($conn, $sql);
-
-      
-          mysqli_stmt_bind_param($stmt, "i", $uid);
-
-        
-          mysqli_stmt_execute($stmt);
-
-          
-          $result = mysqli_stmt_get_result($stmt);
-
-      
-          if (mysqli_num_rows($result) > 0) {
-                while ($row = mysqli_fetch_assoc($result)) {
-                    $pid = $row["pid"];
-                    $name = $row["name"];
-                    $category = $row["category"];
-                    $description = $row["description"];
-                    $price = (int)$row["price"];
-                    $discount = $row["discount"];
-                    $reviews = $row["reviews"];
-                    $image = "../images/prod{$pid}a.jpg";
-                    $finalPrice = (int)((100 - $discount) / 100 * $price);
-                    $qty = $row["quantity"];
-        
-                    echo "<a href='../pages/single_product.php?id=$pid'>
-                        <div class='product-tab' style='background: url($image), #f2f2f2; background-size: cover; background-position: center;' title='$description'>
-                            <div class='product-content'>
-                                <h2>$name</h2>";
-                    if ($finalPrice == $price) {
-                        echo "<p><strong>Price:</strong> ₹$price</p>";
-                    } else {
-                        echo "<p><strong>Price:</strong> <span class='final-price'>₹$finalPrice</span> 
-                              <span class='original-price'>₹$price</span> 
-                              <span class='discount'>($discount% off)</span></p>";
-                    }
-                    echo "<p><strong>Reviews:</strong> $reviews</p>";
-                    echo "<p><strong>Qty: $qty</strong> </p>";
-                    echo "</div></div></a>";
-                }
-          } else {
-              echo "<p>No products available in your cart.</p>";
+    <main class="cart-container">
+      <h1 class="cart-header">Your Shopping Cart</h1>
+      <?php
+        $uid = $_SESSION['uid'];
+        $sql = "SELECT cart.pid, quantity, name, price, discount, inventory FROM cart, product WHERE product.pid=cart.pid AND uid = $uid";
+        $result = mysqli_query($conn, $sql);
+        if (mysqli_num_rows($result) > 0) {
+          echo "<div class='cart-items'>";
+          while ($row = $result->fetch_assoc()) {
+            $pid = $row["pid"];
+            $quantity = $row["quantity"];
+            $name = $row["name"];
+            $price = (int)$row["price"];
+            $discount = $row["discount"];
+            $inventory = $row["inventory"];
+            $image = "../images/prod{$pid}a.jpg";
+            $finalPrice = (int)((100 - $row['discount'])/100 * $row['price']);
+            echo "<div class='cart-item'>";
+            echo "<a href='../pages/single_product.php?id=$pid'><img src='$image' alt='$name'></a>";
+            echo "<p class='item-name'>$name</p>";
+            echo "<p class='item-price'>₹$finalPrice</p>";
+            echo "<div class='quantity-control'>";
+            echo "<button class='decrease-qty'>-</button>";
+            echo "<input id='$pid' type='text' value='$quantity' max='$inventory' readonly>";
+            echo "<button class='increase-qty'>+</button>";
+            echo "</div>";
+            echo "<button class='remove'>Remove</button>";
+            echo "</div>";
           }
+          echo "</div>";
+          echo "<div class='purchase-container'>";
+          echo "<button class='purchase'>Purchase All Items</button>";
+          echo "</div>";
+        }
+        else {
+          echo "<div class='no-products'><p>No products added to the cart.</p></div>";
+          echo "<div class='purchase-container'>";
+          echo "<button onclick='window.location.href = \"../pages/product.php\"'>Shop Items</button>";
+          echo "</div>";
+        }
+        mysqli_close($conn);
+      ?>
+    </main>
 
-          
-          mysqli_stmt_close($stmt);
-          mysqli_close($conn);
+    <script>
+      //Update quantity in cart
+      const updateDb = (id, qty) => {
+        fetch('updateCart.php', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json',},
+          body: JSON.stringify({ id, qty }),
+        });
+      };
 
+      //Remove product from cart
+      const removeDb = (id = 0) => {
+        fetch('removeCart.php', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json',},
+          body: JSON.stringify({ id }),
+        });
+      };
 
-       
-        
-      
-        ?>
-        </div>
-      </main>
-  
+      //Reduce inventory for the purchased product
+      const updateProduct = (cartData) => {
+        fetch('updateProduct.php', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json',},
+          body: JSON.stringify(cartData),
+        });
+      };
+
+      // Handle quantity increase and decrease
+      document.querySelectorAll('.increase-qty').forEach(button => {
+        button.addEventListener('click', event => {
+            const input = event.target.parentElement.querySelector('input');
+            if (input.value != input.max) {
+              input.value = parseInt(input.value) + 1;
+              updateDb(input.id, input.value);
+            }
+            else {
+              alert("No more item available.");
+            }
+        });
+      });
+
+      document.querySelectorAll('.decrease-qty').forEach(button => {
+        button.addEventListener('click', event => {
+            const input = event.target.parentElement.querySelector('input');
+            if (parseInt(input.value) > 1) {
+              input.value = parseInt(input.value) - 1;
+              updateDb(input.id, input.value);
+            }
+            else {
+              const cartItem = event.target.closest('.cart-item');
+              cartItem.remove();
+              removeDb(input.id);
+              if (document.querySelector(".cart-items").innerHTML === "") {
+                window.location.href = "../pages/cart.php";
+              }
+            }
+        });
+      });
+
+      // Handle "Remove" button
+      document.querySelectorAll('.remove').forEach(button => {
+        button.addEventListener('click', event => {
+            const cartItem = event.target.closest('.cart-item');
+            cartItem.remove();
+            removeDb(cartItem.querySelector('input').id);
+            if (document.querySelector(".cart-items").innerHTML === "") {
+              window.location.href = "../pages/cart.php";
+            }
+        });
+      });
+
+      document.querySelector('.purchase').addEventListener('click', () => {
+        const items = document.querySelectorAll('.cart-item');
+        const cartData = Array.from(items).map(item => {
+            const id = item.querySelector('input').id;
+            const quantity = item.querySelector('input').value;
+            return {id, quantity };
+        });
+
+        alert('Purchase successful!');
+        updateProduct(cartData);
+        removeDb();
+        window.location.href = "../pages/cart.php";
+      });
+    </script>
 
     <script>
       const search = document.getElementById("search");
       const searchInput = document.querySelector("input[type='search']");
 
-    
+      //Open the product.php page
+      const openPage = input => {
+        if (input !== "") {
+          window.location.href = `../pages/product.php?search=${encodeURIComponent(input)}`;
+        }
+      }
+
+      //First click displays input box, second click for search
       search.addEventListener("click", () => {
         if (searchInput.style.display === "") {
           searchInput.style.display = "inline";
         }
         else {
           if (searchInput.value.trim() !== "") {
-            $input = searchInput.value.trim();   //Php input to this value and change search
+            openPage(searchInput.value.trim());
           }
         }
       })
@@ -135,15 +211,10 @@
       searchInput.addEventListener("keydown", e => {
         if (e.key === "Enter") {
           if (searchInput.value.trim() !== "") {
-            $input = searchInput.value.trim();   //Php input to this value and change search
+            openPage(searchInput.value.trim());
           }
         }
       })
-
-      const filter = event => {
-        event.preventDefault();
-        console.log(event);
-      }
     </script>
   </body>
 </html>
