@@ -144,7 +144,6 @@
               $Price = (int)$row["price"];
               $discount = $row["discount"];
               $reviews = $row["reviews"];
-              $name = $row['name'];
               $image = "../images/prod{$pid}a.jpg";
               $finalPrice = (int)((100 - $row['discount'])/100 * $row['price']);
               echo "<a href='../pages/single_product.php?id=$pid'><div class='product-tab' style='background: url($image), #f2f2f2; background-size: cover; background-position: center;' title='$description'>";
