@@ -144,7 +144,6 @@
               $Price = (int)$row["price"];
               $discount = $row["discount"];
               $reviews = $row["reviews"];
-              $name = $row['name'];
               $image = "../images/prod{$pid}a.jpg";
               $finalPrice = (int)((100 - $row['discount'])/100 * $row['price']);
               echo "<a href='../pages/single_product.php?id=$pid'><div class='product-tab' style='background: url($image), #f2f2f2; background-size: cover; background-position: center;' title='$description'>";
@@ -155,7 +154,20 @@
               else {
                 echo "<p><strong>Price:</strong> <span class='final-price'>₹$finalPrice</span> <span class='original-price'>₹$Price</span> <span class='discount'>($discount% off)</span></p>";
               }
-              echo "<p><strong>Reviews:</strong> $reviews</p>";
+              echo "<div class='ratings'><strong>Ratings:</strong>";
+              echo "<span>";
+              $i = 1;
+              for (; $i < $reviews; $i++) {
+                echo "<span class='star' style='color: black'>&#x2605;</span>";
+              }
+              if ($reviews < $i && $reviews > $i-1) {
+                $fill = ($reviews - $i + 1)*100;
+                echo "<span class='star' style='background: linear-gradient(90deg, black $fill%, #ddd $fill%); background-clip: text; color: transparent;'>&#x2605;</span>";
+              }
+              for (; $i < 5; $i++) {
+                echo "<span class='star' style='color: #ddd;'>&#x2605;</span>";
+              }
+              echo "<span class='rating-number'>($reviews/5)</span></span></div>";
               echo "</div></div></a>";
             }
           } else {

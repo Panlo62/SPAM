@@ -1,56 +1,105 @@
-
 main {
-    position: fixed;
-    overflow-y: auto;
+    position: relative;
     top: 10vh;
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+}
+  
+.product-images {
+    flex: 1;
+}
+  
+.main-image img {
+    width: 100%;
+    height: 70vh;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+}
+  
+.image-thumbnails {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+  
+.image-thumbnails img {
+    width: 60px;
+    height: 60px;
+    cursor: pointer;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+  
+.product-details {
+    flex: 1;
+    padding: 20px;
 }
 
-.products {
-    position: fixed;
-    top: 10%;  
-    right: 0;
-    height: 90%;
-    width: 95%;
-    padding: 1px;
-    overflow-y: auto;
-}
-
-.figure {
-float: left;
-margin-right: 2em; 
-margin-bottom: 2em;
-height: 98%;
-width: 60%;
-}
-
-.figure img {
-height: 18em;
-width: 17em;
-margin: 2em;
-}
-
-.fig-cap { 
-float: left;
-display: block;
-font-weight: bold; 
-padding-top: 1em;
-margin-top: 3em;
-margin-bottom: 1em;
-line-height: 1.5;
-} 
-
-.final-price {
-    font-size: 1.2em;
+.product-details h1 {
+    font-size: 36px;
     font-weight: bold;
+    margin-bottom: 15px;
 }
 
+.product-details > p {
+    margin: 10px 0;
+    font-size: 18px;
+}
+
+.product-pricing {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+    align-items: baseline;
+}
+  
 .original-price {
+    font-size: 20px;
     text-decoration: line-through;
+    color: gray;
 }
-
-.discount {
-    color: #dc3545;
-    font-size: 1.2em;
+  
+.discount-price {
+    font-size: 28px;
     font-weight: bold;
+    color: green;
+}
+  
+.discount-percentage {
+    font-size: 18px;
+    color: red;
+}
+  
+.add-to-cart-btn {
+    background-color: #007bff;
+    margin-top: 25px;
+    color: white;
+    border: none;
+    padding: 15px 25px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 18px;
+    transition: background-color 0.3s ease; 
 }
 
+.add-to-cart-btn:hover {
+    background-color: #0056b3;
+}
+ 
+.ratings {
+    display: flex;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.star {
+    font-size: 24px;
+    margin-right: 5px;
+}
+
+.rating-number {
+    margin-left: 10px;
+    font-size: 18px;
+    color: #333;
+}
