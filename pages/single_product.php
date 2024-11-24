@@ -99,10 +99,10 @@
           <p class="discount-price">₹<span id="discount-price"><?php echo $finalPrice ?></span></p>
           <p class="discount-percentage">(<?php echo $discount ?>% off)</p>
         </div>
-        <button class="add-to-cart-btn" onclick="checkSession()">Add to Cart</button>
+        <button id="<?php echo $pid; ?>" class="add-to-cart-btn" onclick="checkSession()">Add to Cart</button>
         <div id="quantityControls" class="quantity-controls" style="display:none;">
           <button onclick="updateQuantity('decrement')">-</button>
-          <input id="quantityInput" type="number" value="1" min="1" style="font-size: 24px;" readonly/>
+          <input id="quantityInput" type="number" value="1" min="1" style="font-size: 20px;" readonly/>
           <button onclick="updateQuantity('increment')">+</button>
           <button onclick="confirmAddToCart()">Confirm</button>
         </div>
@@ -117,9 +117,22 @@
             if (data.status === 'not_logged_in') {
               window.location.href = '../pages/auth.php';
             } else if (data.status === 'logged_in') {
-              document.getElementById('quantityControls').style.display = 'block';
-              document.querySelector('.add-to-cart-btn').style.display = 'none';
+              showControls();
             }
+        })
+      }
+
+      let inventory;
+      function showControls() {
+        document.getElementById('quantityControls').style.display = 'block';
+        document.querySelector('.add-to-cart-btn').style.display = 'none';
+        const pid = <?php echo $pid ?>;
+        fetch('get_cart_quantity.php?pid=' + pid)
+        .then(response => response.json())
+        .then(data => {
+          const quantity = data.quantity;
+          inventory = data.inventory;
+          document.getElementById('quantityInput').value = quantity;
         })
       }
 
@@ -128,7 +141,12 @@
         let quantityInput = document.getElementById('quantityInput');
         let currentQuantity = parseInt(quantityInput.value);
         if (action === 'increment') {
-          currentQuantity++;
+          if (inventory == currentQuantity) {
+            alert("Maximum limit reached");
+          }
+          else {
+            currentQuantity++;
+          }
         } else if (action === 'decrement' && currentQuantity > 1) {
           currentQuantity--;
         }
@@ -136,7 +154,14 @@
       }
 
       function confirmAddToCart() {
-        let quantity = document.getElementById('quantityInput').value;
+        const qty = document.getElementById('quantityInput').value;
+        const id = <?php echo $pid ?>;
+        fetch('updateCart.php', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json',},
+          body: JSON.stringify({id, qty}),
+        });
+        alert("Product added to Cart");
       }
 
       function changeImage(imageUrl) {
