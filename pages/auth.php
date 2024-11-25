@@ -1,13 +1,15 @@
+<!doctype html>
 <html lang=en>
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login & Register</title>
+    <title>SPAM</title>
     <link rel="icon" href="../images/favicon.ico">
     <link rel="stylesheet" href="../css/header.css">
     <link rel="stylesheet" href="../css/auth.css">
   </head>
-  <body><header>
+  <body>
+    <header>
       <nav>
         <ul id="left">
           <?php
@@ -19,6 +21,7 @@
               $encodedCategory = rawurlencode($category);
               echo "<li><a href='../pages/product.php?category=$encodedCategory'>$category</a></li>";
             }
+            mysqli_close($conn);
           ?>
           <li>
             <a href="../pages/product.php">More</a>
@@ -41,105 +44,135 @@
         </ul>
       </nav>
     </header>
+
     <?php
-// Database connection
-$host = "localhost";
-$username = "root";
-$password = "";
-$dbname = "spam";
+      // Database connection
+      $conn = mysqli_connect("localhost", "root", "", "spam");
+      
+      // Initialize session
+      session_start();
 
-$conn = new mysqli($host, $username, $password, $dbname);
+      // Handle registration
+      if (isset($_POST['register'])) {
+        $reg_username = $_POST['username'];
+        $reg_password = $_POST['password'];
+        $reg_phone = $_POST['phone'];
+        $reg_address = $_POST['address'];
+        $reg_email = $_POST['email'];
+        $reg_security_question = $_POST['sec_ques'];
+        $reg_security_answer = $_POST['ans'];
+        $result = mysqli_query($conn, "SELECT MAX(Uid) AS uid FROM user");
+        $row = mysqli_fetch_assoc($result);
+        $uid = (int)$row['uid'] + 1;
 
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+        $sql = "INSERT INTO user VALUES ($uid, '$reg_username', '$reg_password', '$reg_phone', '$reg_address', '$reg_email', '$reg_security_question', '$reg_security_answer')";
+        
+        if (mysqli_query($conn, $sql)) {
+          $success = "Registration successful! Please log in.";
+        }
+        else {
+          $error = "Error! Only one user can register with one phone number.";
+        }
+      }
+      
+      // Handle login
+      if (isset($_POST['login'])) {
+        $login_phone = $_POST['phone'];
+        $login_password = $_POST['password'];
+        $sql = "SELECT password, uid FROM user WHERE phone = $login_phone "; 
 
-// Initialize session
-session_start();
+        // FETCHING DATA FROM DATABASE
+        $result = mysqli_query($conn, $sql);
+        if (mysqli_num_rows($result) > 0) {
+          $row = mysqli_fetch_assoc($result);
+          if ($login_password == $row['password']) {
+            $_SESSION['uid'] = $row['uid'];
+            header("location: ../pages/dashboard.php");
+          }
+          else {
+            $error = "Invalid password!";
+          }
+        }
+        else{
+          $error = "Invalid number! No user registered for this phone number.";
+        }
+      }
 
-// Handle registration
-if (isset($_POST['register'])) {
-$reg_username = $_POST['username'];
-$reg_password = $_POST['password'];
-$reg_phone = $_POST['phone'];
-$reg_address = $_POST['address'];
-$reg_email = $_POST['email'];
-$reg_security_question = $_POST['sec_ques'];
-$reg_security_answer = $_POST['Ans'];
-$result = $conn->query('SELECT MAX(Uid) AS uid FROM user');
-$row = $result->fetch_assoc();
-$uid = (int)$row['uid'] + 1;
-$stmt = $conn->query("INSERT INTO user VALUES ($uid, '$reg_username', '$reg_password', '$reg_phone', '$reg_address', '$reg_email', '$reg_security_question', '$reg_security_answer')");
+      mysqli_close($conn);
+    ?>
 
-if ($stmt == TRUE) {
-  $success = "Registration successful! Please log in.";
-} else {
-  $error = "Some error occured!";
-}
-}
-// Handle login
-if (isset($_POST['login'])) {
-    $login_phone = $_POST['phone'];
-    $login_password = $_POST['password'];
-
-   $query = "SELECT password FROM user WHERE phone = $login_phone "; 
-
-// FETCHING DATA FROM DATABASE 
-$result = $conn->query($query);
-if($result->num_rows > 0)
-{
-    $row = $result->fetch_assoc();
-    if ($login_password==$row['password']){
-        header("location: ../pages/dashboard.php");
-    }
-    else{
-        $error = "Invalid password! ";
-    }
-}
-else{
-    $error = "Invalid phone number! ";
-}
-
-$conn->close();
-}
-?>
-    <div class="container" id="login-container">
+    <main>
+      <div class="container" id="login-container">
         <h2>Login</h2>
         <?php if (isset($error)) echo "<p class='error'>$error</p>"; ?>
         <?php if (isset($success)) echo "<p class='success'>$success</p>"; ?>
         <form method="POST">
-            <input type="text" name="phone" placeholder="Phone Number" required>
-            <input type="password" name="password" placeholder="Password" required>
-            <button type="submit" name="login">Login</button>
+          <input type="text" name="phone" placeholder="Phone Number" required>
+          <input type="password" name="password" placeholder="Password" required>
+          <button type="submit" name="login">Login</button>
         </form>
         <p>Don't have an account? <a href="#" onclick="toggleForm('register')">Register</a></p>
-    </div>
+      </div>
 
-    <div class="container" id="register-container" style="display: none;">
+      <div class="container" id="register-container" style="display: none;">
         <h2>Register</h2>
         <form method="POST">
-            <input type="text" name="username" placeholder="Username" required>
-            <input type="password" name="password" placeholder="Password" required>
-            <input type="text" name="phone" placeholder="Phone Number" pattern="^\d{10}$" required>
-            <input type="text" name="address" placeholder="Address" required>
-            <input type="email" name="email" placeholder="Email" required>
-            <select name="sec_ques" required>
-                <option value="" disabled selected>Select a Security Question</option>
-                <option value="What is your mother maiden name?">What is your mother maiden name?</option>
-                <option value="What was your first pet name?">What was your first pet name?</option>
-                <option value="What is your favorite book?">What is your favorite book?</option>
-            </select>
-            <input type="text" name="Ans" placeholder="Security Answer" required>
-            <button type="submit" name="register">Register</button>
+          <input type="text" name="username" placeholder="Username" required>
+          <input type="password" name="password" placeholder="Password - 8 alphanumeric characters" pattern="^[a-zA-Z0-9]{8}$" title="Password must be 8 alphanumeric characters." required>
+          <input type="text" name="phone" placeholder="Phone Number" pattern="^\d{10}$" title="Write a ten digit phone number" required>
+          <input type="text" name="address" placeholder="Address" required>
+          <input type="email" name="email" placeholder="Email">
+          <select name="sec_ques" required>
+            <option value="" disabled selected>Select a Security Question</option>
+            <option value="What is your mother maiden name?">What is your mother maiden name?</option>
+            <option value="What is your favorite color?">What is your favorite color?</option>
+            <option value="What is your birthplace?">What is your birthplace?</option>
+            <option value="What was the name of your first pet?">What was the name of your first pet?</option>
+            <option value="What is your childhood nickname?">What is your childhood nickname?</option>
+            <option value="What was your first school name?">What was your first school name?</option>
+            <option value="What is your father's middle name?">What is your father's middle name?</option>
+            <option value="What is the name of your best friend?">What is the name of your best friend?</option>
+            <option value="What is your favorite book?">What is your favorite book?</option>
+          </select>
+          <input type="text" name="ans" placeholder="Security Answer" required>
+          <button type="submit" name="register">Register</button>
         </form>
         <p>Already have an account? <a href="#" onclick="toggleForm('login')">Login</a></p>
-    </div>
+      </div>
+    </main>
 
     <script>
-        function toggleForm(formType) {
-            document.getElementById('login-container').style.display = formType === 'login' ? 'block' : 'none';
-            document.getElementById('register-container').style.display = formType === 'register' ? 'block' : 'none';
+      function toggleForm(formType) {
+        document.getElementById('login-container').style.display = formType === 'login' ? 'block' : 'none';
+        document.getElementById('register-container').style.display = formType === 'register' ? 'block' : 'none';
+      }
+      
+      const search = document.getElementById("search");
+      const searchInput = document.querySelector("input[type='search']");
+      
+      //Open the product.php page
+      const openPage = input => {
+        if (input !== "") {
+          window.location.href = `../pages/product.php?search=${encodeURIComponent(input)}`;
         }
+      }
+
+      //First click displays input box, second click opens product.php page
+      search.addEventListener("click", () => {
+        if (searchInput.style.display === "") {
+          searchInput.style.display = "inline";
+        }
+        else {
+          openPage(searchInput.value.trim());
+        }
+      })
+
+      //Open product.php page when pressed enter
+      searchInput.addEventListener("keydown", e => {
+        if (e.key === "Enter") {
+          openPage(searchInput.value.trim());
+        }
+      })
     </script>
-</body>
+  </body>
 </html>
