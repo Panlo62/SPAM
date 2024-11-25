@@ -98,6 +98,41 @@
         }
       }
 
+      // Handle reset password
+      if (isset($_POST['resetPassword'])) {
+        $reset_security_question = $_POST['sec_ques'];
+        $reset_security_answer = $_POST['ans'];
+        $reset_phone = $_POST['phone'];
+        $reset_password = $_POST['password'];
+        $reset_confirm_password = $_POST['confirm_password'];
+
+        if ($reset_password != $reset_confirm_password) {
+          $error = "Invalid! Password and Confirm password do not match.";
+        }
+        else {
+          $sql = "SELECT uid, sec_ques, ans FROM user WHERE phone = $reset_phone";
+
+          // FETCHING DATA FROM DATABASE
+          $result = mysqli_query($conn, $sql);
+          if (mysqli_num_rows($result) > 0) {
+            $row = mysqli_fetch_assoc($result);
+            $uid = $row['uid'];
+            if ($reset_security_answer == $row['ans'] && $reset_security_question == $row['sec_ques']) {
+              //Update password
+              $sql = "UPDATE user SET password = '$reset_password' WHERE uid = $uid";
+              mysqli_query($conn, $sql);
+              $success = "Password changed successfully!";
+            }
+            else {
+              $error = "Invalid security question / answer!";
+            }
+          }
+          else{
+            $error = "Invalid number! No user registered for this phone number.";
+          }
+        }
+      }
+
       mysqli_close($conn);
     ?>
 
@@ -109,7 +144,32 @@
         <form method="POST">
           <input type="text" name="phone" placeholder="Phone Number" required>
           <input type="password" name="password" placeholder="Password" required>
+          <a href="#" onclick="toggleForm('resetPassword')" style="margin-bottom: 10px;">Forgot password?</a>
           <button type="submit" name="login">Login</button>
+        </form>
+        <p>Don't have an account? <a href="#" onclick="toggleForm('register')">Register</a></p>
+      </div>
+
+      <div class="container" id="resetPassword-container" style="display: none;">
+        <h2>Reset Password</h2>
+        <form method="POST">
+          <input type="text" name="phone" placeholder="Phone Number" required>
+          <select name="sec_ques" required>
+            <option value="" disabled selected>Select your Security Question</option>
+            <option value="What is your mother's maiden name?">What is your mother's maiden name?</option>
+            <option value="What is your favorite color?">What is your favorite color?</option>
+            <option value="What is your birthplace?">What is your birthplace?</option>
+            <option value="What was the name of your first pet?">What was the name of your first pet?</option>
+            <option value="What is your childhood nickname?">What is your childhood nickname?</option>
+            <option value="What was your first school name?">What was your first school name?</option>
+            <option value="What is your father's middle name?">What is your father's middle name?</option>
+            <option value="What is the name of your best friend?">What is the name of your best friend?</option>
+            <option value="What is your favorite book?">What is your favorite book?</option>
+          </select>
+          <input type="text" name="ans" placeholder="Security Answer" required>
+          <input type="password" name="password" placeholder="Password" pattern="^[a-zA-Z0-9]{8}$" title="Password must be 8 alphanumeric characters." required>
+          <input type="password" name="confirm_password" placeholder="Confirm password" pattern="^[a-zA-Z0-9]{8}$" title="Password must be 8 alphanumeric characters." required>
+          <button type="submit" name="resetPassword">Reset password</button>
         </form>
         <p>Don't have an account? <a href="#" onclick="toggleForm('register')">Register</a></p>
       </div>
@@ -118,13 +178,13 @@
         <h2>Register</h2>
         <form method="POST">
           <input type="text" name="username" placeholder="Username" required>
-          <input type="password" name="password" placeholder="Password - 8 alphanumeric characters" pattern="^[a-zA-Z0-9]{8}$" title="Password must be 8 alphanumeric characters." required>
+          <input type="password" name="password" placeholder="Password" pattern="^[a-zA-Z0-9]{8}$" title="Password must be 8 alphanumeric characters." required>
           <input type="text" name="phone" placeholder="Phone Number" pattern="^\d{10}$" title="Write a ten digit phone number" required>
           <input type="text" name="address" placeholder="Address" required>
           <input type="email" name="email" placeholder="Email">
           <select name="sec_ques" required>
             <option value="" disabled selected>Select a Security Question</option>
-            <option value="What is your mother maiden name?">What is your mother maiden name?</option>
+            <option value="What is your mother's maiden name?">What is your mother's maiden name?</option>
             <option value="What is your favorite color?">What is your favorite color?</option>
             <option value="What is your birthplace?">What is your birthplace?</option>
             <option value="What was the name of your first pet?">What was the name of your first pet?</option>
@@ -144,6 +204,7 @@
     <script>
       function toggleForm(formType) {
         document.getElementById('login-container').style.display = formType === 'login' ? 'block' : 'none';
+        document.getElementById('resetPassword-container').style.display = formType === 'resetPassword' ? 'block' : 'none';
         document.getElementById('register-container').style.display = formType === 'register' ? 'block' : 'none';
       }
       
