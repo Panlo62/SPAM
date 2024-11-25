@@ -177,7 +177,6 @@
             const quantity = item.querySelector('input').value;
             const price = item.querySelector('.item-price').innerText.substr(1);
             cost += parseInt(quantity) * parseInt(price);
-            console.log(cost, quantity, price);
             return {id, quantity};
         });
 
