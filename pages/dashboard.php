@@ -83,7 +83,7 @@
           <h3>Purchasing History</h3>
           <ol>
             <?php
-            $sql = "SELECT oi.pid, p.inventory, p.name, p.price, p.discount FROM user u, orders o, order_items oi, product p WHERE o.oid=oi.oid AND u.uid = o.uid AND p.pid=oi.pid AND u.uid=$uid";
+            $sql = "SELECT DISTINCT oi.pid, p.inventory, p.name, p.price, p.discount FROM orders o, order_items oi, product p WHERE o.oid=oi.oid AND uid=$uid AND p.pid=oi.pid";
             $result = mysqli_query($conn, $sql);
             while ($row = mysqli_fetch_assoc($result)) {
               $pid = $row["pid"];
@@ -99,7 +99,7 @@
               echo "<button onclick='updateQuantity(\"decrement\")'>-</button>";
               echo "<input id='quantityInput' type='number' value='1' min='1' style='font-size: 14px;' readonly/>";
               echo "<button onclick='updateQuantity(\"increment\")'>+</button>";
-              echo "<button class='confirm-btn' onclick=\"confirmAddToCart()\">Confirm</button>";
+              echo "<button class='confirm-btn' onclick=\"confirmAddToCart($pid)\">Confirm</button>";
               echo "</div>";
               echo "</li>";
             }
@@ -141,9 +141,9 @@
         quantityInput.value = currentQuantity;
       }
 
-      function confirmAddToCart() {
+      function confirmAddToCart(pid) {
         const qty = document.getElementById('quantityInput').value;
-        const id = <?php echo $pid ?>;
+        const id = pid;
         fetch('updateCart.php', {
           method: 'POST',
           headers: {'Content-Type': 'application/json',},
