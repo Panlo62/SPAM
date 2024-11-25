@@ -76,6 +76,7 @@
           <div class="user-info-right">
             <img src="../images/user.png" alt="User Photo" class="user-photo">
             <button class="view-cart-button" onclick="window.location.href='../pages/cart.php'">View Cart</button>
+            <button class="logout" onclick="window.location.href='../pages/logout.php'">Logout</button>
           </div>
         </div>
         <div class="purchasing-history">
