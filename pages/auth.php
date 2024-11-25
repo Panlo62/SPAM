@@ -41,6 +41,68 @@
         </ul>
       </nav>
     </header>
+    <?php
+// Database connection
+$host = "localhost";
+$username = "root";
+$password = "";
+$dbname = "spam";
+
+$conn = new mysqli($host, $username, $password, $dbname);
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Initialize session
+session_start();
+
+// Handle registration
+if (isset($_POST['register'])) {
+$reg_username = $_POST['username'];
+$reg_password = $_POST['password'];
+$reg_phone = $_POST['phone'];
+$reg_address = $_POST['address'];
+$reg_email = $_POST['email'];
+$reg_security_question = $_POST['sec_ques'];
+$reg_security_answer = $_POST['Ans'];
+$result = $conn->query('SELECT MAX(Uid) AS uid FROM user');
+$row = $result->fetch_assoc();
+$uid = (int)$row['uid'] + 1;
+$stmt = $conn->query("INSERT INTO user VALUES ($uid, '$reg_username', '$reg_password', '$reg_phone', '$reg_address', '$reg_email', '$reg_security_question', '$reg_security_answer')");
+
+if ($stmt == TRUE) {
+  $success = "Registration successful! Please log in.";
+} else {
+  $error = "Some error occured!";
+}
+}
+// Handle login
+if (isset($_POST['login'])) {
+    $login_phone = $_POST['phone'];
+    $login_password = $_POST['password'];
+
+   $query = "SELECT password FROM user WHERE phone = $login_phone "; 
+
+// FETCHING DATA FROM DATABASE 
+$result = $conn->query($query);
+if($result->num_rows > 0)
+{
+    $row = $result->fetch_assoc();
+    if ($login_password==$row['password']){
+        header("location: ../pages/dashboard.php");
+    }
+    else{
+        $error = "Invalid password! ";
+    }
+}
+else{
+    $error = "Invalid phone number! ";
+}
+
+$conn->close();
+}
+?>
     <div class="container" id="login-container">
         <h2>Login</h2>
         <?php if (isset($error)) echo "<p class='error'>$error</p>"; ?>
@@ -63,8 +125,8 @@
             <input type="email" name="email" placeholder="Email" required>
             <select name="sec_ques" required>
                 <option value="" disabled selected>Select a Security Question</option>
-                <option value="What is your mother's maiden name?">What is your mother's maiden name?</option>
-                <option value="What was your first pet's name?">What was your first pet's name?</option>
+                <option value="What is your mother maiden name?">What is your mother maiden name?</option>
+                <option value="What was your first pet name?">What was your first pet name?</option>
                 <option value="What is your favorite book?">What is your favorite book?</option>
             </select>
             <input type="text" name="Ans" placeholder="Security Answer" required>
@@ -72,70 +134,6 @@
         </form>
         <p>Already have an account? <a href="#" onclick="toggleForm('login')">Login</a></p>
     </div>
-    <?php
-// Database connection
-$host = "localhost";
-$username = "root";
-$password = "";
-$dbname = "spam";
-
-$conn = new mysqli($host, $username, $password, $dbname);
-
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
-// Initialize session
-session_start();
-
-// Handle registration
-if (isset($_POST['register'])) {
-    $reg_username = $_POST['username'];
-    $reg_password = $_POST['password'];
-    $reg_phone = $_POST['phone'];
-    $reg_address = $_POST['address'];
-    $reg_email = $_POST['email'];
-    $reg_security_question = $_POST['sec_ques'];
-    $reg_security_answer = $_POST['Ans'];
-    $result = $conn->query("SELECT MAX(Uid) AS uid FROM user");
-    $row = $result->fetch_assoc();
-    $uid = (int)$row['uid'] + 1;
-    $stmt = $conn->query("INSERT INTO user VALUES ($uid, '$reg_username', '$reg_password', '$reg_phone', '$reg_address', '$reg_email', '$reg_security_question', '$reg_security_answer')");
-
-    if ($stmt == TRUE) {
-        $success = "Registration successful! Please log in.";
-    } else {
-        echo "Some error occured!";
-    }
-
-}
-
-// Handle login
-if (isset($_POST['login'])) {
-    $login_phone = $_POST['phone'];
-    $login_password = $_POST['password'];
-
-   $query = "SELECT password FROM user WHERE phone = $login_phone "; 
-
-// FETCHING DATA FROM DATABASE 
-$result = $conn->query($query);
-if($result->num_rows > 0)
-{
-    $row = $result->fetch_assoc();
-    if ($login_password==$row['password']){
-        header("location: ../pages/product.php");
-    }
-    else{
-        echo "Invalid password! ";
-    }
-}
-else{
-    echo "Invalid phone number! ";
-}
-
-$conn->close();
-}
-?>
 
     <script>
         function toggleForm(formType) {

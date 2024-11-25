@@ -49,7 +49,7 @@
         a:hover {
             text-decoration: underline;
         }
-        .error, .success {
+        .error{
             text-align: center;
             color: red;
             margin-bottom: 10px;
